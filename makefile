@@ -8,10 +8,16 @@ CPPFLAGS += -D_XOPEN_SOURCE=500
 CFLAGS   += -std=c99
 LDFLAGS  += -lowfat -lsqlite3
 
-query: query.c
+query    := query.c
 
-%: %.c
-	echo "  CC  $*"; \
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o "$@" "$<"
+query: .depend
+	sparse $(CPPFLAGS) $(query:M*.c)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(query) $(LDFLAGS)
 
-.SILENT:
+.depend: $(query)
+	$(CPP) $(CPPFLAGS) -M -MT query $(query) >$@
+
+clean:
+	rm -f .depend query
+
+.PHONY: clean
