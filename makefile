@@ -8,6 +8,8 @@ CPPFLAGS += -D_XOPEN_SOURCE=500 $(:!pkg-config --cflags libowfat!) $(:!pkg-confi
 CFLAGS   += -std=c99
 LDFLAGS  += $(:!pkg-config --libs libowfat!) $(:!pkg-config --libs sqlite3!)
 
+PREFIX   ?= /usr
+
 query    := query.c
 
 query: .depend
@@ -20,4 +22,8 @@ query: .depend
 clean:
 	rm -f .depend query
 
-.PHONY: clean
+install: query
+	mkdir -p $(DESTDIR)$(PREFIX)/bin/
+	cp $> $(DESTDIR)$(PREFIX)/bin/
+
+.PHONY: clean install
